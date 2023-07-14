@@ -1,0 +1,19 @@
+{
+	"site": "https://github.com/ohmypxl/client-check",
+	"user": "ohmypxl",
+	"repo": "client-check",
+	"contributors": [
+		"Fairuz-Afdhal",
+		"ff-agus44",
+		"Kirima/pxl"
+	],
+	"entry": "test.pwn",
+	"output": "gamemodes/test.amx",
+	"dependencies": [
+		"sampctl/samp-stdlib"
+	],
+	"dev_dependencies": [
+		"pawn-lang/YSI-Includes@5.x",
+		"pawn-lang/sa-mp-fixes"
+	],
+}

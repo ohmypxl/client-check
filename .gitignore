@@ -1,0 +1,12 @@
+
+# No binary/junk folder!
+dependencies/
+gamemodes/
+scriptfiles/
+
+# No binary/junk file!
+*.exe
+*.dll
+*.txt
+*.log
+*.cfg

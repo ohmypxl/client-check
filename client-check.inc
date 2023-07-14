@@ -93,18 +93,6 @@ public OnPlayerConnect(playerid)
     #endif
 }
 
-#if defined _ALS_OnPlayerConnect
-    #undef OnPlayerConnect
-#else
-    #define _ALS_OnPlayerConnect
-#endif
-
-#define OnPlayerConnect( Pxl_OnPlayerConnect(
-#if defined Pxl_OnPlayerConnect
-    forward Pxl_OnPlayerConnect(playerid);
-#endif
-#endif
-
 public OnPlayerDisconnect(playerid, reason)
 {
 	if (Client_g_sPlayerCheckTime[playerid])
@@ -122,6 +110,68 @@ public OnPlayerDisconnect(playerid, reason)
 	#endif
 }
 
+// Implement simple IsPlayerPaused check if not available
+// For fixing the false positive thingy.
+#if !defined IsPlayerPaused
+static
+	Client_g_sPlayerLastTick[MAX_PLAYERS];
+
+public OnPlayerUpdate(playerid) {
+    Client_g_sPlayerLastTick[playerid] = GetTickCount();
+	#if defined Pxl_OnPlayerUpdate
+		return Pxl_OnPlayerUpdate(playerid);
+	#else
+		return 1;
+	#endif
+}
+
+stock bool:Pxl_IsPlrPaused(playerid) {
+    return (GetTickCount() - Client_g_sPlayerLastTick[playerid] > 1500);
+}
+
+forward Client_InternalTimer(playerid);
+public Client_InternalTimer(playerid)
+{
+	if (IsPlayerPaused(playerid))
+	{
+		// Keep refiring if AFK!
+		CheckPlayerClient(playerid);
+		return;
+	}
+
+    if (Client_g_sPlayerClientStatus[playerid] != USING_CLIENT_ANDROID)
+    {
+        Client_g_sPlayerClientStatus[playerid] = USING_CLIENT_ANDROID;
+        CallLocalFunction(#OnClientChecked, "ii", playerid, 0);
+    }
+}
+
+#if defined _ALS_OnPlayerConnect
+    #undef OnPlayerConnect
+#else
+    #define _ALS_OnPlayerConnect
+#endif
+
+#define OnPlayerConnect( Pxl_OnPlayerConnect(
+#if defined Pxl_OnPlayerConnect
+    forward Pxl_OnPlayerConnect(playerid);
+#endif
+#endif
+
+#if defined _ALS_OnPlayerUpdate
+	#undef OnPlayerUpdate
+#else
+	#define _ALS_OnPlayerUpdate
+#endif
+
+#define OnPlayerUpdate Pxl_OnPlayerUpdate
+#if defined Pxl_OnPlayerUpdate
+	forward Pxl_OnPlayerUpdate(playerid);
+#endif
+
+#define IsPlayerPaused Pxl_IsPlrPaused
+#endif
+
 #if defined _ALS_OnPlayerDisconnect
 	#undef OnPlayerDisconnect
 #else
@@ -131,10 +181,6 @@ public OnPlayerDisconnect(playerid, reason)
 #define OnPlayerDisconnect( Pxl_OnPlayerDisconnect(
 #if defined Pxl_OnPlayerDisconnect
 	forward Pxl_OnPlayerDisconnect(playerid, reason);
-#endif
-
-#if defined OnPlayerClientChecked
-	forward OnPlayerClientChecked(playerid, ClientStatus:status);
 #endif
 
 /*
@@ -218,56 +264,9 @@ public OnGameModeInit()
 	forward Pxl_OnGameModeInit();
 #endif
 
-// Implement simple IsPlayerPaused check if not available
-// For fixing the false positive thingy.
-#if !defined IsPlayerPaused
-static
-	Client_g_sPlayerLastTick[MAX_PLAYERS];
-
-public OnPlayerUpdate(playerid) {
-    Client_g_sPlayerLastTick[playerid] = GetTickCount();
-	#if defined Pxl_OnPlayerUpdate
-		return Pxl_OnPlayerUpdate(playerid);
-	#else
-		return 1;
-	#endif
-}
-
-stock bool:Pxl_IsPlrPaused(playerid) {
-    return (GetTickCount() - Client_g_sPlayerLastTick[playerid] > 1500);
-}
-
-#if defined _ALS_OnPlayerUpdate
-	#undef OnPlayerUpdate
-#else
-	#define _ALS_OnPlayerUpdate
-#endif
-
-#define OnPlayerUpdate Pxl_OnPlayerUpdate
-#if defined Pxl_OnPlayerUpdate
-	forward Pxl_OnPlayerUpdate(playerid);
-#endif
-
-#define IsPlayerPaused Pxl_IsPlrPaused
-#endif
-
-forward Client_InternalTimer(playerid);
-public Client_InternalTimer(playerid)
-{
-	if (IsPlayerPaused(playerid))
-	{
-		// Keep refiring if AFK!
-		CheckPlayerClient(playerid);
-		return;
-	}
-
-    if (Client_g_sPlayerClientStatus[playerid] != USING_CLIENT_ANDROID)
-    {
-        Client_g_sPlayerClientStatus[playerid] = USING_CLIENT_ANDROID;
-        CallLocalFunction(#OnClientChecked, "ii", playerid, 0);
-    }
-}
-
+// Maybe if all of the tree functions isn't available this might do! YES!
+// Because open.mp fixes this behavior so i don't think we ever need the state tho
+#if !defined _INC_open_mp
 forward OnClientCheckResponse(playerid, actionid, memaddr, retndata);
 public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
 {
@@ -307,6 +306,7 @@ public FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata) <OnCli
 	forward Pxl_OnClientCheckResponse(playerid, actionid, memaddr, retndata);
 #endif
 #endif
+#endif
 
 public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
 {
@@ -331,6 +331,11 @@ public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
 // Only usable for OnPlayerClientChecked
 #define IsUsingAndroid(status) (status == USING_CLIENT_ANDROID)
 #define IsUsingPC(status) (status == USING_CLIENT_PC)
+
+// Define forward if defined
+#if defined OnPlayerClientChecked
+	forward OnPlayerClientChecked(playerid, ClientStatus:status);
+#endif
 
 // Undef Internal Function
 #if defined Pxl_IsPlrPaused

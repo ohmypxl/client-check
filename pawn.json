@@ -15,5 +15,5 @@
 	"dev_dependencies": [
 		"pawn-lang/YSI-Includes@5.x",
 		"pawn-lang/sa-mp-fixes"
-	],
+	]
 }

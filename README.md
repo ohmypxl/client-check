@@ -22,7 +22,7 @@ Include in your code and begin using the library:
 
 ## Guide
 
-This guide will teach you how to use client-check wisely, so if you're interested please continue reading below. If you don't you can just skip it by choosing the following table to get into your destination:
+This guide will teach you how to use client-check wisely, so if you're interested please continue reading below. If you don't you can just skip it by choosing the following link to get into your destination:
 
 * [Getting Started](#getting-started)
 * [Function/Callback list(s)] (#function--callbacks)

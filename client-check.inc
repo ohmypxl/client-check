@@ -264,7 +264,7 @@ public OnGameModeInit()
 	forward Pxl_OnGameModeInit();
 #endif
 
-// Maybe if all of the tree functions isn't available this might do! YES!
+// Maybe if all of the three include isn't available this might do! YES!
 // Because open.mp fixes this behavior so i don't think we ever need the state tho
 #if !defined _INC_open_mp
 forward OnClientCheckResponse(playerid, actionid, memaddr, retndata);
@@ -328,9 +328,13 @@ public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
 	return 0;
 }
 
-// Only usable for OnPlayerClientChecked
-#define IsUsingAndroid(status) (status == USING_CLIENT_ANDROID)
-#define IsUsingPC(status) (status == USING_CLIENT_PC)
+// Complex Algorithm Thingy that enables IsUsing... to be used outside of the uhhh
+// Basically it will do pointless job tbh
+#define IsUsingAndroid(%0) (_:PXLOVRLD1:PXLOVRLD2:PXLOVRLD3:CheckDevice__(ANDROID,%0))
+#define IsUsingPC(%0) (_:PXLOVRLD1:PXLOVRLD2:PXLOVRLD3:CheckDevice__(PC,%0))
+#define PXLOVRLD1:PXLOVRLD2:PXLOVRLD3:CheckDevice__(%1,status) (status == USING_CLIENT_%1)
+#define PXLOVRLD2:PXLOVRLD3:CheckDevice__(ANDROID,%2) IsPlayerUsingAndroid(%2)
+#define PXLOVRLD3:CheckDevice__(PC,%1) IsPlayerUsingPC(%1)
 
 // Define forward if defined
 #if defined OnPlayerClientChecked

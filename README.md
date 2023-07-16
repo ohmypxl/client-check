@@ -57,6 +57,10 @@ That function is: `IsPlayerUsingAndroid(playerid)` and `IsPlayerUsingPC(playerid
 
 That function will check if the player is using android or using PC, please note that the following function only works if you don't define `CLIENT_NO_AUTO_CHECK`.
 
+But how can i use the `Is(Player)Using...(playerid)`?
+
+Well, you can use the function both `...UsingPC(playerid)` and `...UsingAndroid(playerid)` anywhere you want except in `OnPlayerConnect`.
+
 ### Example 2 - Manual Check
 
 In the last example i was mentioning about `if you don't define CLIENT_NO_AUTO_CHECK` right? well that define will disable the checking automatically after player connecting to the server, this option should be defined if you understand about how Client Check works or if you want to do checking manually via trigger command like this:
@@ -102,8 +106,8 @@ You might be wondering, how can i define `CLIENT_NO_AUTO_CHECK`? Well you can ju
 * `CheckPlayerClient(playerid)` will try to send client check into the playerid, but the playerid must be connected of all times.
 * `IsPlayerUsingAndroid(playerid)` will try to check if player from the results of `CheckPlayerClient` turns out to be using android or not.
 * `IsPlayerUsingPC(playerid)` same as `IsPlayerUsingAndroid` except it checks if user using PC.
-* `IsUsingAndroid(status)` same as `IsPlayerUsingAndroid` but it only can be used inside of `OnPlayerClientChecked`.
-* `IsUsingAndroid(status)` same as `IsPlayerUsingPC` but it only can be used inside of `OnPlayerClientChecked`.
+* `IsUsingAndroid(status)` same as `IsPlayerUsingAndroid` but it actually can be used both inside or outside of `OnPlayerClientChecked`.
+* `IsUsingPC(status)` same as `IsPlayerUsingPC` but it actually can be used both inside or outside of `OnPlayerClientChecked`.
 * `OnPlayerClientChecked(playerid, ClientStatus:status)` is a callback that would be automatically be called whenever the script returned the results from `CheckPlayerClient`
 
 (You cannot use this inside OnPlayerConnect (except for `CheckPlayerClient`, that is why i made a custom one :>)
